@@ -159,21 +159,30 @@ export default function App() {
   }
 
   // toggle sort
-  const toggleSort = (key) =>
-    setSortConfig((prev) =>
+  const toggleSort = (key) =>{
+     setSortConfig((prev) =>
       prev.key === key ? { key, direction: prev.direction === "asc" ? "desc" : "asc" } : { key, direction: "asc" }
     );
+    let dataset = data.sort((a,b) => a[key] > b[key] ? 1 : -1)
+    setData(dataset)
+  }
 
   // spacer heights
   const spacerTop = startIndex * ROW_HEIGHT;
   const spacerBottom = (totalRows - endIndex) * ROW_HEIGHT;
 
   return (
-    <div style={{ padding: 20,
-      margin: "auto",
-      display: "flex",
-      flexDirection: "column",
-     }}>
+    <div style={{
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",  // vertical centering
+  alignItems: "center",      // horizontal centering
+  minHeight: "100vh",        // full viewport height
+  width: "100vw",         // full viewport width
+  padding: 20,
+  boxSizing: "border-box"
+}}>
+
       <h2>Virtualized Batch Table — Filter & Sort (fixed)</h2>
 
       <div style={{ marginBottom: 8, display: "flex", gap: 8, alignItems: "center" }}>
@@ -199,13 +208,13 @@ export default function App() {
         ref={containerRef}
         onScroll={handleScroll}
         style={{
-          height: VIEWPORT_HEIGHT,
-          overflowY: "auto",
-          border: "1px solid #ccc",
-          position: "relative",
+           height: VIEWPORT_HEIGHT,
+      overflowY: "auto",
+      border: "1px solid #ccc",
+      minWidth: "50vw",  // table width relative to parent
         }}
       >
-        <table style={{ borderCollapse: "collapse", width: "100%", position: "absolute", top: 0 }}>
+        <table  style={{ borderCollapse: "collapse", width: "100%" }}>
           <thead>
             <tr style={{ height: ROW_HEIGHT, background: "#fafafa" }}>
               <th style={thStyle} onClick={() => toggleSort("id")}>ID {sortIndicator("id", sortConfig)}</th>
