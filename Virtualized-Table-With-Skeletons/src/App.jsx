@@ -159,13 +159,34 @@ export default function App() {
   }
 
   // toggle sort
-  const toggleSort = (key) =>{
-     setSortConfig((prev) =>
-      prev.key === key ? { key, direction: prev.direction === "asc" ? "desc" : "asc" } : { key, direction: "asc" }
-    );
-    let dataset = data.sort((a,b) => a[key] > b[key] ? 1 : -1)
-    setData(dataset)
-  }
+ const toggleSort = (key) => {
+  setSortConfig((prev) => {
+    const direction = prev.key === key && prev.direction === "asc" ? "desc" : "asc";
+    return { key, direction };
+  });
+
+  setData((prev) => {
+    const copy = prev.slice(); // shallow copy
+    copy.sort((a, b) => {
+      if (!a || !b) return 0; // skip empty slots in sparse array
+
+      const aVal = a[key];
+      const bVal = b[key];
+
+      // number comparison
+      if (typeof aVal === "number" && typeof bVal === "number") {
+        return sortConfig.direction === "asc" ? aVal - bVal : bVal - aVal;
+      }
+
+      // string comparison
+      return sortConfig.direction === "asc"
+        ? aVal.toString().localeCompare(bVal.toString())
+        : bVal.toString().localeCompare(aVal.toString());
+    });
+    return copy;
+  });
+};
+
 
   // spacer heights
   const spacerTop = startIndex * ROW_HEIGHT;
@@ -245,7 +266,12 @@ const thStyle = {
   padding: "8px",
   cursor: "pointer",
   userSelect: "none",
+  position: "sticky",
+  top: 0,                 // stick to top of scroll container
+  background: "#fafafa",  // same as your existing header bg
+  zIndex: 2,              // make sure it stays above rows
 };
+
 
 const tdStyle = {
   padding: "6px 8px",
