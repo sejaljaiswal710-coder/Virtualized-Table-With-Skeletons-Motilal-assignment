@@ -45,7 +45,7 @@ export default function App() {
       setLoading(false);
 
       if (startIndex + count >= TOTAL_ROWS) setHasMore(false);
-    }, 4000); // simulated 2s delay
+    }, 2000); // simulated 2s delay
   };
 
   // Derived: list of loaded rows (compact)
